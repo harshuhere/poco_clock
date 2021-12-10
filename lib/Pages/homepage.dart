@@ -171,7 +171,9 @@ class _HomePageState extends State<HomePage>
                 controller: _pageController,
                 children: [
                   AlarmPage(),
-                  ClockPage(),
+                  ClockPage(
+                    cityNames: ["London"],
+                  ),
                   TimerPage(),
                   CounterPage(),
                 ],

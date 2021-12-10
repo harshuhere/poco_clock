@@ -1,12 +1,15 @@
 import 'package:alphabet_list_scroll_view_fix/alphabet_list_scroll_view.dart';
 import 'package:clock_poco/Pages/ClockPage/worldTime.dart';
+import 'package:clock_poco/service/alarm_sql_service.dart';
+import 'package:clock_poco/service/sql_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class ChooseCountry extends StatefulWidget {
-  const ChooseCountry({Key? key}) : super(key: key);
-
+  ChooseCountry({Key? key, required this.settime}) : super(key: key);
+  Function settime;
   @override
   _ChooseCountryState createState() => _ChooseCountryState();
 }
@@ -39,28 +42,17 @@ class _ChooseCountryState extends State<ChooseCountry> {
           offset.substring(0, offset.indexOf(":") + 3);
       print(utcoffset);
 
-      // for final cityname
       String temp = element.toString();
       String finalcityname = temp.substring(temp.indexOf("/") + 1, temp.length);
       // print(finalcityname);
       // print(now);
-
-      cityName.add([finalcityname, element.toString(), utcoffset]);
+      if (currenttime.timeZoneName == "GMT") {
+        cityName.add([finalcityname, element.toString(), utcoffset]);
+      }
     });
     // print(cityName);
     addTOstrList();
   }
-
-  //for time difference(utc offset)
-  // getTimeDifference(var currenttime) {
-  //   // get time diff
-  //   DateTime server_datetime = DateTime.parse(currenttime.toString());
-  //   var timezoneOffset = server_datetime.timeZoneOffset;
-
-  //   var time_diff = Duration(
-  //       hours: timezoneOffset.inHours, minutes: timezoneOffset.inMinutes % 60);
-  //   print(time_diff);
-  // }
 
   /// for Alphabetical Scroll View
   List<String> strList = [];
@@ -184,12 +176,27 @@ class _ChooseCountryState extends State<ChooseCountry> {
                         var detroit = tz.getLocation(strList[index]);
                         var currentTimeofSelectedCity =
                             tz.TZDateTime.now(detroit);
+                        String dif = currentTimeofSelectedCity.toString();
+                        String diff = dif.substring(dif.length - 5, dif.length);
+
                         print(strListForAlfaScroll[index]);
 
                         print("--------->>>>>>>>>>$currentTimeofSelectedCity");
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
                                 "${strListForAlfaScroll[index]} :- $currentTimeofSelectedCity")));
+                        String formattedTime = DateFormat("h:mma")
+                            .format(currentTimeofSelectedCity);
+
+                        widget.settime(formattedTime, diff);
+                        Map<String, Object> data = {
+                          'selectedCityName':
+                              strListForAlfaScroll[index].toString(),
+                          'timeDifference': diff,
+                        };
+                        var a = await SqlAlarmService().insertNewAlarm(
+                            data, SqlModel.tableWorldclockCityList);
+                        print(a);
 
                         Navigator.pop(context, true);
                       },

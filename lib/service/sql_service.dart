@@ -11,8 +11,9 @@ class SqlModel {
 
 // TABLE NAMES
   static final tableAlarms = 'alarms';
-  static final tableWorldTime = 'worldTime';
+  // static final tableWorldTime = 'worldTime';
   static final tablePickedTimeForStopwatch = 'pickedTimeForStopwatch';
+  static final tableWorldclockCityList = 'tableWorldclockCityList';
 
   /// Initialize DB
   Future initDb() async {
@@ -51,16 +52,23 @@ class SqlModel {
         label TEXT)
       """);
 
-      dbClient.execute("""
-     CREATE TABLE IF NOT EXISTS $tableWorldTime(
-        auto_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        cityName TEXT)
-      """);
+      //   dbClient.execute("""
+      //  CREATE TABLE IF NOT EXISTS $tableWorldTime(
+      //     auto_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      //     cityName TEXT)
+      //   """);
 
       dbClient.execute("""
      CREATE TABLE IF NOT EXISTS $tablePickedTimeForStopwatch(
         auto_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         timee1 TEXT)
+      """);
+
+      dbClient.execute("""
+     CREATE TABLE IF NOT EXISTS $tableWorldclockCityList(
+        auto_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        selectedCityName TEXT,
+        timeDifference TEXT)
       """);
 
       return "tables created";
