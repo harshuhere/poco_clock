@@ -46,9 +46,9 @@ class _ChooseCountryState extends State<ChooseCountry> {
       String finalcityname = temp.substring(temp.indexOf("/") + 1, temp.length);
       // print(finalcityname);
       // print(now);
-      if (currenttime.timeZoneName == "GMT") {
-        cityName.add([finalcityname, element.toString(), utcoffset]);
-      }
+      // if (currenttime.timeZoneName == "GMT") {
+      cityName.add([finalcityname, element.toString(), utcoffset]);
+      // }
     });
     // print(cityName);
     addTOstrList();

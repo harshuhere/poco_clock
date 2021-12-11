@@ -4,6 +4,7 @@ import 'package:clock_poco/Widgets/listaddringtones.dart';
 import 'package:clock_poco/model/timepickedforTimer_model.dart';
 import 'package:clock_poco/service/pickedtimebtn_sql_service.dart';
 import 'package:clock_poco/service/sql_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:intl/intl.dart';
@@ -52,7 +53,7 @@ class _CounterPageState extends State<CounterPage>
   void initState() {
     _timerController = TimerController(this);
     _scrollController;
-    _future = getallTimes();
+    // _future = getallTimes();
     super.initState();
   }
 
@@ -115,38 +116,29 @@ class _CounterPageState extends State<CounterPage>
                   ),
                 ],
               )
-            : Container(
-                padding: EdgeInsets.only(top: 50),
-                child: TimePickerSpinner(
-                  alignment: Alignment.center,
-                  time: DateTime(0, 0, 0, hour, minute, 0, 0),
-                  is24HourMode: true,
-                  isShowSeconds: true,
-                  normalTextStyle: TextStyle(
-                      fontSize: 24,
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.w300),
-                  highlightedTextStyle: TextStyle(
-                      fontSize: 38,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500),
-                  spacing: 50,
-                  itemHeight: 100,
-                  itemWidth: MediaQuery.of(context).size.width * 0.17,
-                  isForce2Digits: true,
-                  onTimeChange: (time) {
-                    print(time);
-                    // setState(() {
-                    //   countminutes = int.parse(time.toString());
-                    // });
-                    // setState(() {
-                    //   selectedtime = time;
-                    // });
-                    // print("selected time is :${selectedtime}");
-                    // ScaffoldMessenger.of(context)
-                    //     .showSnackBar(SnackBar(content: Text("$time")));
-                  },
-                ),
+            : Column(
+                children: [
+                  Container(
+                    child: Text(
+                      "minutes : $minute",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  Container(
+                    child: Text(
+                      "hour : $hour",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 50),
+                    child: timePickerWidget(
+                      hour: hour,
+                      minute: minute,
+                      countminutes: 20,
+                    ),
+                  ),
+                ],
               ),
         Column(
           children: [
@@ -259,6 +251,13 @@ class _CounterPageState extends State<CounterPage>
                                                 return FrequentTimeBTN(
                                                   callback: methodToPass,
                                                   ontapoftimebtn: () {
+                                                    String a = snapshott
+                                                        .data![index].time1
+                                                        .toString();
+                                                    int time = int.parse("$a");
+                                                    setState(() {
+                                                      minute = time;
+                                                    });
                                                     print(
                                                         "Selected time is ${snapshott.data}");
                                                   },
@@ -548,6 +547,9 @@ class _CounterPageState extends State<CounterPage>
                         minute = int.parse(minutess);
                         selectedtime = totalMinutes;
                       });
+                      Future.delayed(Duration(milliseconds: 200), () {
+                        setState(() {});
+                      });
 
                       print({"selectedtime is ------>>>>>$selectedtime"});
                     },
@@ -653,5 +655,81 @@ class _CounterPageState extends State<CounterPage>
     super.dispose();
     // Need to call dispose function.
     _timerController.dispose();
+  }
+}
+
+class timePickerWidget extends StatefulWidget {
+  timePickerWidget({
+    Key? key,
+    required this.hour,
+    required this.minute,
+    required this.countminutes,
+  }) : super(key: key);
+
+  final int hour;
+  final int minute;
+  int countminutes;
+
+  @override
+  State<timePickerWidget> createState() => _timePickerWidgetState();
+}
+
+class _timePickerWidgetState extends State<timePickerWidget> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(
+          cupertinoOverrideTheme: CupertinoThemeData(
+              textTheme: CupertinoTextThemeData(
+        dateTimePickerTextStyle: TextStyle(color: Colors.blue, fontSize: 16),
+        pickerTextStyle: TextStyle(color: Colors.white, fontSize: 12),
+      ))),
+      child: CupertinoTimerPicker(
+          initialTimerDuration:
+              Duration(hours: widget.hour, minutes: widget.minute),
+          alignment: Alignment.center,
+          // backgroundColor: Colors.red,
+          mode: CupertinoTimerPickerMode.hms,
+          onTimerDurationChanged: (datetime) {}),
+    );
+    // TimePickerSpinner(
+    //   alignment: Alignment.center,
+    //   time: DateTime(0, 0, 0, widget.hour, widget.minute, 0, 0),
+    //   is24HourMode: true,
+    //   isShowSeconds: true,
+    //   normalTextStyle: TextStyle(
+    //       fontSize: 24, color: Colors.grey[700], fontWeight: FontWeight.w300),
+    //   highlightedTextStyle: TextStyle(
+    //       fontSize: 38, color: Colors.white, fontWeight: FontWeight.w500),
+    //   spacing: 50,
+    //   itemHeight: 100,
+    //   itemWidth: MediaQuery.of(context).size.width * 0.17,
+    //   isForce2Digits: true,
+    //   onTimeChange: (time) {
+    //     print(time);
+
+    //     setState(() {
+    //       // widget.countminutes = int.parse(time.toString());
+    //     });
+    //     // setState(()  {
+    //     //   selectedtime = time;
+    //     // });
+    //     // print("selected time is :${selectedtime}");
+    //     // ScaffoldMessenger.of(context)
+    //     //     .showSnackBar(SnackBar(content: Text("$time")));
+    //   },
+    // );
   }
 }
